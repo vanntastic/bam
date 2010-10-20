@@ -1,0 +1,3 @@
+module Bam
+  # Your code goes here...
+end
