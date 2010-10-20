@@ -46,6 +46,7 @@ module Bam
       if tasks.length > 0
         tasks.each do |task|
           puts "- Executing deployment task: #{task}"
+          `task`
         end
       end
     end
