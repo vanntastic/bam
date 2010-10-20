@@ -9,10 +9,13 @@ end
 pwd = Dir.pwd
 bampath = File.join(pwd, "deploy.bam")
 if File.exists?(bampath)
+  @pre_deploy_tasks, @post_deploy_tasks = nil
   deployfile = File.read(File.join(pwd,"deploy.bam"))
   eval deployfile
   ready_to = Bam::Deployment.new @server, @to, pwd
+  ready_to.deploy_task(@pre_deploy_tasks) unless @pre_deploy_tasks.nil?
   ready_to.deploy
+  ready_to.deploy_task(@post_deploy_tasks) unless @post_deploy_tasks.nil?
 else
   puts "No bam.deploy file found, run bamify ."
 end

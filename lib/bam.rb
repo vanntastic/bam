@@ -28,15 +28,27 @@ module Bam
     def col_width
       `stty size`.split(" ").last.to_i
     end
+    
+    def border
+      "="*col_width
+    end
 
     def deploy
-      puts("Starting deployment...")
+      puts("Starting deployment...\n#{border}")
       # use -avzC to exclude .git and .svn repositories
       cmd = "rsync -avzC #{@from} #{@server}:#{@to} #{exclusions}"
       output = "OUTPUT: #{cmd}"
-      border = "="*col_width
       puts("#{border}\n#{output}\n#{border}")
       system(cmd)
     end
+    
+    def deploy_tasks(tasks)
+      if tasks.length > 0
+        tasks.each do |task|
+          puts "- Executing deployment task: #{task}"
+        end
+      end
+    end
+    
   end
 end
