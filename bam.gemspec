@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Vann Ek"]
   s.email       = ["vann@innerfusion.net"]
-  s.homepage    = "http://rubygems.org/gems/bam"
+  s.homepage    = "http://github.com/vanntastic/bam"
   s.summary     = %q{A super simple deployment utility}
   s.description = %q{A super simple deployment utility using rsync and git}
 
