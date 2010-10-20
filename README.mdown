@@ -1,5 +1,12 @@
 Bam
 ===
 
-A super simple deployment utility. Capistrano is a super cool utility, I love it, I
-use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. Instead 
+A super simple deployment utility, it's basically an opinionated abstraction of rsync served in a capistrano fashion. Capistrano is a super cool utility, I love it, I use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. With a combination of rsync and git (well actually not really, bam simply allows git to do what git does best... version management). 
+
+Installation
+============
+
+    gem install bam
+    
+    
+

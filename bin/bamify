@@ -3,6 +3,7 @@
 # Bamify : generates the deploy.bam file for deploying using bam
 # USAGE :
 # bamify [path_to_project]
+include BamHelpers
 
 def template
 "
@@ -33,7 +34,7 @@ else
     file << template
   end
   `echo deploy.bam >> .gitignore`
-  puts "--\n Bam! you're done! bam.deploy generated to : #{bam_path} \n--"
+  puts wrap_borders("Bam! you're done! bam.deploy generated to : #{bam_path}")
   # TODO : add editor options 
 end
 
