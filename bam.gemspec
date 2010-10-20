@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Vann Ek"]
   s.email       = ["vann@innerfusion.net"]
   s.homepage    = "http://rubygems.org/gems/bam"
-  s.summary     = %q{A super simple deployment utility ...}
+  s.summary     = %q{A super simple deployment utility}
   s.description = %q{A super simple deployment utility using rsync and git}
 
   s.rubyforge_project = "bam"
