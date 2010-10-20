@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby -wKU
+
 begin 
   require "bam"
 rescue LoadError
