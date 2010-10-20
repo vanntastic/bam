@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -wKU
+require "bam/controls"
+
+pwd = Dir.pwd
+bampath = File.join(pwd, ".bamdeploy")
+if File.exists?(bampath)
+  deployfile = File.read(File.join(pwd,".bamdeploy"))
+  eval deployfile
+  ready_to = Bam.new @server, @to, @from
+  ready_to.deploy
+else
+  puts "No .bamdeploy file found, run bamify ."
+end

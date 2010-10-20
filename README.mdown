@@ -1,0 +1,5 @@
+Bam
+===
+
+A super simple deployment utility. Capistrano is a super cool utility, I love it, I
+use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. Instead 
