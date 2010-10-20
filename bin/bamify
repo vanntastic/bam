@@ -3,13 +3,8 @@
 # Bamify : generates the deploy.bam file for deploying using bam
 # USAGE :
 # bamify [path_to_project]
-begin 
-  require "bam"
-rescue LoadError
-  require "rubygems"
-  require "bam"
-end
 
+$:.push File.expand_path("../../lib", __FILE__)
 include BamHelpers
 
 def template
