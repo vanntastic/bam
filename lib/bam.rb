@@ -1,5 +1,5 @@
 module Bam
-  class Controls
+  class Deployment
     PWD = Dir.pwd
 
     def initialize(server, to, from=nil)
@@ -18,7 +18,7 @@ module Bam
 
     def exclusions
       return "" if !has_git_ignores? || !has_git?
-      git_ignore = File.join PWD, ".git_ignore"
+      git_ignore = File.join PWD, ".gitignore"
       exclusions = `cat #{git_ignore}`.split("\n")
       exclude_list = exclusions.map { |e| "--exclude '#{e}' " }
       exclude_list = exclude_list.join

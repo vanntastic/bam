@@ -1,12 +1,17 @@
 #!/usr/bin/env ruby -wKU
-require "bam/controls"
+begin 
+  require "bam"
+rescue LoadError
+  require "rubygems"
+  require "bam"
+end
 
 pwd = Dir.pwd
-bampath = File.join(pwd, ".bamdeploy")
+bampath = File.join(pwd, "deploy.bam")
 if File.exists?(bampath)
-  deployfile = File.read(File.join(pwd,".bamdeploy"))
+  deployfile = File.read(File.join(pwd,"deploy.bam"))
   eval deployfile
-  ready_to = Bam.new @server, @to, @from
+  ready_to = Bam::Deployment.new @server, @to, @from
   ready_to.deploy
 else
   puts "No .bamdeploy file found, run bamify ."
