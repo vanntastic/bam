@@ -11,8 +11,8 @@ bampath = File.join(pwd, "deploy.bam")
 if File.exists?(bampath)
   deployfile = File.read(File.join(pwd,"deploy.bam"))
   eval deployfile
-  ready_to = Bam::Deployment.new @server, @to, @from
+  ready_to = Bam::Deployment.new @server, @to, pwd
   ready_to.deploy
 else
-  puts "No .bamdeploy file found, run bamify ."
+  puts "No bam.deploy file found, run bamify ."
 end

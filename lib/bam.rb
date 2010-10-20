@@ -2,8 +2,8 @@ module Bam
   class Deployment
     PWD = Dir.pwd
 
-    def initialize(server, to, from=nil)
-      @from = PWD if from.nil?
+    def initialize(server, to, from)
+      @from = from
       @server = server
       @to = to
     end
