@@ -28,11 +28,12 @@ if ARGV[0] == "--help"
   puts "bamify [path_to_project]"
 else
   path = ARGV[0] == "" ? ARGV[0] : Dir.pwd
-  File.open File.join(path, "deploy.bam"), "w+" do |file|
+  bam_path = File.join(path, "deploy.bam")
+  File.open File.join(bam_path), "w+" do |file|
     file << template
   end
   `echo deploy.bam >> .gitignore`
-  puts "--\n Bam! you're done! \n--"
+  puts "--\n Bam! you're done! bam.deploy generated to : #{bam_path} \n--"
   # TODO : add editor options 
 end
 
