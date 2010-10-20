@@ -22,6 +22,12 @@ def template
 #   - username@host
 @server = 'login@yourhost.com'
 # the location on the server don't forget to append the slash/
+# make sure that it's the parent folder that you are uploading to,
+# for example:
+#   instead of...
+#     @to = '~/public_html/your_site/'
+#   do...
+#     @to = '~/public_html/'
 @to = '~/location/to/your/web/site/or/app/'
 
 # pre_deploy_tasks : These are things that you can run locally before deployment
@@ -52,4 +58,3 @@ else
   puts wrap_borders("Bam! you're done! bam.deploy generated to : #{bam_path}")
   # TODO : add editor options 
 end
-

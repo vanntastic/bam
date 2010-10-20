@@ -1,7 +1,7 @@
 Bam
 ===
 
-A super simple deployment utility, it's basically an opinionated abstraction of rsync served in a capistrano fashion. Capistrano is a super cool utility, I love it, I use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. With a combination of rsync and git (well actually not really, bam simply allows git to do what git does best... version management). 
+A super simple deployment utility, it's basically an opinionated abstraction of rsync served in a capistrano fashion. Capistrano is a super cool utility, I love it, I use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. The great thing about bam is that you don't need to learn another DSL, it's simply just ruby that you need to edit in the deploy file to configure your deployment recipe.
 
 Installation
 ============
@@ -16,12 +16,45 @@ Usage
     # update the @server and @to variables in deploy.bam file
     # work on your project
     bam
+
+How deploy.bam works
+====================
+
+After you run <code>bamify</code>, it generates a <code>deploy.bam</code> file, which looks like:
+
+    # Bam Deploy File
+    # ---------------
+    # All you have to do is change all the variables below...
+    # the ip or hostname of the server, can use the following conventions for this variable:
+    #   - server_name # => if you have server_name setup in ~/.ssh/config
+    #   - username@host
+    @server = 'login@yourhost.com'
+    # the location on the server don't forget to append the slash/
+    @to = '~/location/to/your/web/site/or/app/'
+
+    # pre_deploy_tasks : These are things that you can run locally before deployment
+    # @pre_deploy_tasks = ['rm -rf cache/*']
+    # @pre_deploy_tasks = []
+
+    # post_deploy_tasks : These are things that you can run locally before deployment
+    # @post_deploy_tasks = ['rm -rf cache/*']
+    # @post_deploy_tasks = []
+
+Simply set <code>@server</code> to your hostname or ip of your server and set <code>@to</code> to the location
+on the server where the your project is located, make sure that it's the parent folder (and don't forget to
+append the slash '/'), so instead of <code>~/public_html/project_name/</code> you would do <code>~/public_html/</code>
+
+Pre and Post Deployment Tasks
+=============================
+
+You can run pre and post deployment tasks by assigning or setting the @pre_deploy_tasks or @post_deploy_tasks variables. For now, you can only run tasks locally, but remember since it's just a ruby file, you can require in Net::SSH and write your own methods to run remote tasks, if it comes down to it, I might just write in that ability myself... we'll see, otherwise feel free to fork it and add it yourself :)
     
 TODO
 ====
 
-- Add revision history
+- Add static revision history for integrated rollbacks
+- Maybe use choice or highline to prompt to fill in values?
+- Maybe add in remote tasks
 
 
-Copyright (c) 2010 Vann Ek., released under the MIT license     
-
+Copyright (c) 2010 Vann Ek., released under the MIT license
