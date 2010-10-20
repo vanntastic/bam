@@ -34,7 +34,7 @@ module Bam
     end
 
     def deploy
-      puts("Starting deployment...\n#{border}")
+      puts("Starting deployment...")
       # use -avzC to exclude .git and .svn repositories
       cmd = "rsync -avzC #{@from} #{@server}:#{@to} #{exclusions}"
       output = "OUTPUT: #{cmd}"
