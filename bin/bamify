@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby -wKU
+
+# Bamify : generates the deploy.bam file for deploying using bam
+# USAGE :
+# bamify [path_to_project]
+
+def template
+  "
+    # All you have to do is change all the variables below...
+    # the ip or hostname of the server, can use the following conventions for this variable:
+    #   - server_name # => if you have server_name setup in ~/.ssh/config
+    #   - username@host
+    @server = login@yourhost.com
+    # the location on the server don't forget to append the slash/
+    @to = ~/location/to/your/web/site/or/app/
+    
+    # pre_deploy_tasks : These are things that you can run locally before deployment
+    # @pre_deploy_tasks = ['rm -rf cache/*']
+    # @pre_deploy_tasks = []
+    
+    # post_deploy_tasks : These are things that you can run locally before deployment
+    # @post_deploy_tasks = ['rm -rf cache/*']
+    # @post_deploy_tasks = []
+  "
+end
+
+if ARGV[0] == ""
+  puts "bamify [path_to_project]"
+else
+  File.open File.join(Dir.pwd, "deploy.bam"), "w+" do |file|
+    file << template
+  end
+end
+
