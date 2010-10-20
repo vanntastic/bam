@@ -18,5 +18,5 @@ if File.exists?(bampath)
   ready_to.deploy
   ready_to.deploy_tasks(@post_deploy_tasks) unless @post_deploy_tasks.nil?
 else
-  puts "No bam.deploy file found, run bamify ."
+  puts "No bam.deploy file found, run bamify"
 end
