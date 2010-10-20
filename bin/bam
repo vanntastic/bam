@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby -wKU
 
 begin 
+  require "bam_helpers"
   require "bam"
 rescue LoadError
   require "rubygems"
+  require "bam_helpers"
   require "bam"
 end
 

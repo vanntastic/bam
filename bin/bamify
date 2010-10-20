@@ -35,6 +35,7 @@ def template
 end
 
 def add_ignore_bam
+  `touch .gitignore` unless File.exists?(".gitignore")
   no_bam_found = (`cat .gitignore | grep deploy.bam` == "")
   `echo deploy.bam >> .gitignore` if no_bam_found
 end

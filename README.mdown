@@ -16,6 +16,12 @@ Usage
     # update the @server and @to variables in deploy.bam file
     # work on your project
     bam
+    
+TODO
+====
+
+- Add revision history
+
 
 Copyright (c) 2010 Vann Ek., released under the MIT license     
 
