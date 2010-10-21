@@ -48,6 +48,11 @@ Pre and Post Deployment Tasks
 =============================
 
 You can run pre and post deployment tasks by assigning or setting the @pre_deploy_tasks or @post_deploy_tasks variables. For now, you can only run tasks locally, but remember since it's just a ruby file, you can require in Net::SSH and write your own methods to run remote tasks, if it comes down to it, I might just write in that ability myself... we'll see, otherwise feel free to fork it and add it yourself :)
+
+Ignoring Files and Directories on Deployment
+============================================
+
+What if you don't want to push certain files or directories to your host? Say you have log or tmp files that would otherwise take up space. Well if you use git, you don't have to worry simply add them to .gitignore and bam is smart enough to ignore those files on deploy as well.
     
 TODO
 ====
