@@ -9,16 +9,38 @@ rescue LoadError
   require "bam"
 end
 
+include BamHelpers
+
 pwd = Dir.pwd
 bampath = File.join(pwd, "deploy.bam")
+dry_run = false
+
+case ARGV[0]
+when "--dry"
+  dry_run = true
+
+end
 if File.exists?(bampath)
   @pre_deploy_tasks, @post_deploy_tasks = nil
   deployfile = File.read(File.join(pwd,"deploy.bam"))
   eval deployfile
-  ready_to = Bam::Deployment.new @server, @to, pwd
-  ready_to.deploy_tasks(@pre_deploy_tasks) unless @pre_deploy_tasks.nil?
-  ready_to.deploy
-  ready_to.deploy_tasks(@post_deploy_tasks) unless @post_deploy_tasks.nil?
+  if dry_run
+    puts wrap_borders("Executing DRY RUN") 
+    unless @pre_deploy_tasks.nil?
+      pre_deploy_tasks_list = @pre_deploy_tasks.join("\n ")
+      puts "\nRunning PRE DEPLOYMENT tasks: \n\n #{pre_deploy_tasks_list} \n\n"
+    end
+    puts "DEPLOYING #{pwd} to #{@server}:#{@to} \n\n"
+    unless @post_deploy_tasks.nil?
+      post_deploy_tasks_list = @post_deploy_tasks.join("\n ")
+      puts "Running POST DEPLOYMENT tasks: \n\n #{post_deploy_tasks_list}"
+    end
+  else
+    ready_to = Bam::Deployment.new @server, @to, pwd
+    ready_to.deploy_tasks(@pre_deploy_tasks) unless @pre_deploy_tasks.nil?
+    ready_to.deploy
+    ready_to.deploy_tasks(@post_deploy_tasks) unless @post_deploy_tasks.nil?
+  end
 else
   puts "No deploy.bam file found, run bamify to generate one."
 end
