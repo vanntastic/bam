@@ -30,6 +30,9 @@ def template
 #     @to = '~/public_html/'
 @to = '~/location/to/your/web/site/or/app/'
 
+# add list of file to always include in deployments
+@always_include = %w()
+
 # pre_deploy_tasks : These are things that you can run locally before deployment
 # @pre_deploy_tasks = ['rm -rf cache/*']
 # @pre_deploy_tasks = []
@@ -46,15 +49,22 @@ def add_ignore_bam
   `echo deploy.bam >> .gitignore` if no_bam_found
 end
 
+def help_message
+  <<-help
+bamify [path_to_project]
+  --ignore-bam: add bam.deploy file to .gitignore list
+  help
+end
+
 if ARGV[0] == "--help"
-  puts "bamify [path_to_project]"
+  puts help_message
 else
   path = ARGV[0] == "" ? ARGV[0] : Dir.pwd
   bam_path = File.join(path, "deploy.bam")
   File.open File.join(bam_path), "w+" do |file|
     file << template
   end
-  add_ignore_bam
+  add_ignore_bam if ARGV[0] == "--ignore-bam"
   puts wrap_borders("Bam! you're done! bam.deploy generated to : #{bam_path}")
   # TODO : add editor options 
 end
