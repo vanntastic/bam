@@ -1,65 +1,49 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Bam by vanntastic</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Bam</h1>
+      <h2 class="project-tagline">a super simple deployment utility using rsync and git</h2>
+      <a href="https://github.com/vanntastic/bam" class="btn">View on GitHub</a>
+      <a href="https://github.com/vanntastic/bam/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/vanntastic/bam/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/vanntastic/bam">Fork On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/vanntastic/bam/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/vanntastic/bam/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
-          <h1>Bam</h1>
-          <p>a super simple deployment utility using rsync and git</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/vanntastic">vanntastic</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
-        </div>
-
-        <h1>Bam</h1>
+    <section class="main-content">
+      <h2>
+<a id="bam" class="anchor" href="#bam" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bam</h2>
 
 <p>A super simple deployment utility, it's basically an opinionated abstraction of rsync served in a capistrano fashion. Capistrano is a super cool utility, I love it, I use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. The great thing about bam is that you don't need to learn another DSL, it's simply just ruby that you need to edit in the deploy file to configure your deployment recipe.</p>
 
-<h1>Installation</h1>
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
 <pre><code>gem install bam
 </code></pre>
 
-<h1>Usage</h1>
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
 <pre><code>cd into/your/project/root
 bamify
-# update the @server and @to variables in deploy.bam file
+# update the @server and @to variables in deploy.bam.rb file
 # work on your project
 bam
 </code></pre>
 
-<h1>How deploy.bam works</h1>
+<h3>
+<a id="how-deploybamrb-works" class="anchor" href="#how-deploybamrb-works" aria-hidden="true"><span class="octicon octicon-link"></span></a>How deploy.bam.rb works</h3>
 
-<p>After you run <code>bamify</code>, it generates a <code>deploy.bam</code> file, which looks like:</p>
+<p>After you run <code>bamify</code>, it generates a <code>deploy.bam.rb</code> file, which looks like:</p>
 
 <pre><code># Bam Deploy File
 # ---------------
@@ -69,39 +53,98 @@ bam
 #   - username@host
 @server = 'login@yourhost.com'
 # the location on the server don't forget to append the slash/
+# make sure that it's the parent folder that you are uploading to,
+# for example:
+#   instead of...
+#     @to = '~/public_html/your_site/'
+#   do...
+#     @to = '~/public_html/'
 @to = '~/location/to/your/web/site/or/app/'
+
+# add list of file to always include in deployments
+@always_include = %w()
+
+# remote tasks : these are tasks that you want to run on the server
+# @remote_tasks = { :restart_app =&gt; 'touch /my/cool/app/restart.txt' }
+@remote_tasks = {}
 
 # pre_deploy_tasks : These are things that you can run locally before deployment
 # @pre_deploy_tasks = ['rm -rf cache/*']
-# @pre_deploy_tasks = []
+@pre_deploy_tasks = []
 
 # post_deploy_tasks : These are things that you can run locally before deployment
 # @post_deploy_tasks = ['rm -rf cache/*']
-# @post_deploy_tasks = []
+@post_deploy_tasks = []
 </code></pre>
 
 <p>Simply set <code>@server</code> to your hostname or ip of your server and set <code>@to</code> to the location
 on the server where the your project is located, make sure that it's the parent folder (and don't forget to
 append the slash '/'), so instead of <code>~/public_html/project_name/</code> you would do <code>~/public_html/</code></p>
 
-<h1>Pre and Post Deployment Tasks</h1>
+<h3>
+<a id="command-line-options" class="anchor" href="#command-line-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command line options</h3>
 
-<p>You can run pre and post deployment tasks by assigning or setting the @pre_deploy_tasks or @post_deploy_tasks variables. For now, you can only run tasks locally, but remember since it's just a ruby file, you can require in Net::SSH and write your own methods to run remote tasks, if it comes down to it, I might just write in that ability myself... we'll see, otherwise feel free to fork it and add it yourself :)</p>
+<pre><code># pass the --help flag for all options
+bam --help
+</code></pre>
 
-<h1>Ignoring Files and Directories on Deployment</h1>
+<ul>
+<li>--dry : execute a dry run</li>
+<li>--deploy : runs the deployment, this is the default task</li>
+<li>--version : prints the current version</li>
+<li>--remote : execute a remote command, split multiple tasks with a ':'</li>
+</ul>
 
-<p>What if you don't want to push certain files or directories to your host? Say you have log or tmp files that would otherwise take up space. Well if you use git, you don't have to worry simply add them to .gitignore and bam is smart enough to ignore those files on deploy as well.</p>
+<h3>
+<a id="pre-post-and-remote-deployment-tasks" class="anchor" href="#pre-post-and-remote-deployment-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pre, Post and Remote Deployment Tasks</h3>
 
-<h1>TODO</h1>
+<p>You can run pre, post and remote deployment tasks by assigning or setting the <code>@pre_deploy_tasks</code>, <code>@post_deploy_tasks</code> and <code>@remote_tasks</code> variables. Here's an example, note that <code>@remote_tasks</code> is a Hash:</p>
+
+<pre><code>@pre_deploy_tasks = ['rm -rf cache/*']
+@post_deploy_tasks = ['rm -rf log/*']
+@remote_tasks = {
+    :restart_app =&gt; "touch /path/to/app/restart.txt"
+}
+
+# run remote tasks in your pre or post tasks array by adding a remote:[task_name] in your array like:
+@post_deploy_tasks = ['rm-rf log/*', 'remote:restart_app']
+
+# execute remote tasks like:
+bam --remote restart_app
+</code></pre>
+
+<h3>
+<a id="ignoring-files-and-directories-on-deployment" class="anchor" href="#ignoring-files-and-directories-on-deployment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ignoring Files and Directories on Deployment</h3>
+
+<p>What if you don't want to push certain files or directories to your host? Say you have log or tmp files that would otherwise take up space. Well if you use git, you don't have to worry simply add them to .gitignore and bam is smart enough to ignore those files on deploy as well. </p>
+
+<h3>
+<a id="add-exceptions-to-ignore-list" class="anchor" href="#add-exceptions-to-ignore-list" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add exceptions to ignore list</h3>
+
+<p>There could be some situations where you wouldn't want to exclude all the entries in <code>.gitignore</code>, if that's the case, simply add those entries to the <code>@always_include</code> variable. Here's an example:</p>
+
+<pre><code>@always_include = %w(app.min.js dist.min.js)
+</code></pre>
+
+<h3>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h3>
 
 <ul>
 <li>Add static revision history for integrated rollbacks</li>
 <li>Maybe use choice or highline to prompt to fill in values?</li>
-<li>Maybe add in remote tasks</li>
-</ul><p>Copyright (c) 2010 Vann Ek., released under the MIT license</p>
-      </section>
+<li>Maybe add in remote tasks : DONE!</li>
+</ul>
 
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+<p>Copyright (c) 2010 Vann Ek., released under the MIT license</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/vanntastic/bam">Bam</a> is maintained by <a href="https://github.com/vanntastic">vanntastic</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
   </body>
 </html>
