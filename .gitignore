@@ -1,5 +1,5 @@
 pkg/*
 *.gem
 .bundle
-deploy.bam
+deploy.bam.rb
 bam/*

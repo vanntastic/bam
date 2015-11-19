@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby -wKU
 
 begin 
+  require "optparse"
   require "bam_helpers"
   require "bam"
 rescue LoadError
+  require "optparse"
   require "rubygems"
   require "bam_helpers"
   require "bam"
@@ -11,31 +13,44 @@ end
 
 include BamHelpers
 
+options = {
+  :deploy => true
+}
 pwd = Dir.pwd
-bampath = File.join(pwd, "deploy.bam")
-dry_run = false
+bampath = File.join(pwd, "deploy.bam.rb")
 
-case ARGV[0]
-when "--dry"
-  dry_run = true
+OptionParser.new do |opts|
+  opts.banner = "Usage: bam [options]"
 
-end
+  opts.on("-t", "--dry", "Do a dry run") { |v| options[:dry_run] = true }
+  opts.on("-d", "--deploy", "Deploy project (DEFAULT)") { |v| options[:deploy] = true }
+
+  opts.on('-r', '--remote TASKS', "Run a remote task, split multiple tasks with ':'") do |task|
+    options[:remote_tasks] = task.split(":")
+  end
+
+end.parse!
 
 if File.exists?(bampath)
-  @pre_deploy_tasks, @post_deploy_tasks, @always_include = nil
-  deployfile = File.read(File.join(pwd,"deploy.bam"))
+  deployfile = File.read(File.join(pwd,"deploy.bam.rb"))
+  # this will give use access to @pre_deploy_tasks, @post_deploy_tasks, @always_include, @remote_tasks 
   eval deployfile
-  ready_to = Bam::Deployment.new @server, @to, pwd, dry_run
-  puts wrap_borders("Executing DRY RUN") if dry_run
-  unless @pre_deploy_tasks.nil?
-    puts "PRE-DEPLOYMENT TASKS: \n\n"
-    ready_to.deploy_tasks(@pre_deploy_tasks) 
-  end
-  ready_to.deploy(@always_include)
-  unless @post_deploy_tasks.nil?
-    puts "POST-DEPLOYMENT TASKS: \n\n"
-    ready_to.deploy_tasks(@post_deploy_tasks) 
-  end
+  task_config = {
+    :pre => @pre_deploy_tasks,
+    :post => @post_deploy_tasks,
+    :always_include => @always_include,
+    :remote => @remote_tasks
+  }
+  ready_to = Bam::Deployment.new @server, @to, pwd, options[:dry_run], task_config
+  
+  puts wrap_borders("Executing DRY RUN") if options[:dry_run] 
+  if options[:remote_tasks]
+    options[:remote_tasks].each do |task|
+      ready_to.remote_exec task 
+    end
+  else
+    ready_to.deploy
+  end  
 else
-  puts "No deploy.bam file found, run bamify to generate one."
+  puts "No deploy.bam.rb file found, run bamify to generate one."
 end

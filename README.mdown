@@ -13,14 +13,14 @@ Usage
 
     cd into/your/project/root
     bamify
-    # update the @server and @to variables in deploy.bam file
+    # update the @server and @to variables in deploy.bam.rb file
     # work on your project
     bam
 
-How deploy.bam works
+How deploy.bam.rb works
 ====================
 
-After you run <code>bamify</code>, it generates a <code>deploy.bam</code> file, which looks like:
+After you run <code>bamify</code>, it generates a <code>deploy.bam.rb</code> file, which looks like:
 
     # Bam Deploy File
     # ---------------
