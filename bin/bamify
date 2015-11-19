@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -wKU
 
-# Bamify : generates the deploy.bam file for deploying using bam
+# Bamify : generates the deploy.bam.rb file for deploying using bam
 # USAGE :
 # bamify [path_to_project]
 begin 
@@ -30,31 +30,44 @@ def template
 #     @to = '~/public_html/'
 @to = '~/location/to/your/web/site/or/app/'
 
+# add list of file to always include in deployments
+@always_include = %w()
+
+# remote tasks : these are tasks that you want to run on the server
+# @remote_tasks = { :restart_app => 'touch /my/cool/app/restart.txt' }
+@remote_tasks = {}
+
 # pre_deploy_tasks : These are things that you can run locally before deployment
 # @pre_deploy_tasks = ['rm -rf cache/*']
-# @pre_deploy_tasks = []
+@pre_deploy_tasks = []
 
 # post_deploy_tasks : These are things that you can run locally before deployment
 # @post_deploy_tasks = ['rm -rf cache/*']
-# @post_deploy_tasks = []
+@post_deploy_tasks = []
 "
 end
 
 def add_ignore_bam
   `touch .gitignore` unless File.exists?(".gitignore")
-  no_bam_found = (`cat .gitignore | grep deploy.bam` == "")
-  `echo deploy.bam >> .gitignore` if no_bam_found
+  no_bam_found = (`cat .gitignore | grep deploy.bam.rb` == "")
+  `echo deploy.bam.rb >> .gitignore` if no_bam_found
+end
+
+def help_message
+  <<-help
+bamify [path_to_project]
+  --ignore-bam: add bam.deploy file to .gitignore list
+  help
 end
 
 if ARGV[0] == "--help"
-  puts "bamify [path_to_project]"
+  puts help_message
 else
   path = ARGV[0] == "" ? ARGV[0] : Dir.pwd
-  bam_path = File.join(path, "deploy.bam")
+  bam_path = File.join(path, "deploy.bam.rb")
   File.open File.join(bam_path), "w+" do |file|
     file << template
   end
-  add_ignore_bam
-  puts wrap_borders("Bam! you're done! bam.deploy generated to : #{bam_path}")
-  # TODO : add editor options 
+  add_ignore_bam if ARGV[0] == "--ignore-bam"
+  puts wrap_borders("Bam! you're done! deploy.bam.rb generated to : #{bam_path}")
 end

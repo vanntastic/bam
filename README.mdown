@@ -1,26 +1,23 @@
-Bam
-===
+## Bam
 
 A super simple deployment utility, it's basically an opinionated abstraction of rsync served in a capistrano fashion. Capistrano is a super cool utility, I love it, I use it all the time. But for smaller projects (websites, sinatra apps, etc), I think it's simply overkill. The great thing about bam is that you don't need to learn another DSL, it's simply just ruby that you need to edit in the deploy file to configure your deployment recipe.
 
-Installation
-============
+### Installation
 
     gem install bam
     
-Usage
-=====
+### Usage
+
 
     cd into/your/project/root
     bamify
-    # update the @server and @to variables in deploy.bam file
+    # update the @server and @to variables in deploy.bam.rb file
     # work on your project
     bam
 
-How deploy.bam works
-====================
+### How deploy.bam.rb works
 
-After you run <code>bamify</code>, it generates a <code>deploy.bam</code> file, which looks like:
+After you run <code>bamify</code>, it generates a <code>deploy.bam.rb</code> file, which looks like:
 
     # Bam Deploy File
     # ---------------
@@ -30,36 +27,80 @@ After you run <code>bamify</code>, it generates a <code>deploy.bam</code> file, 
     #   - username@host
     @server = 'login@yourhost.com'
     # the location on the server don't forget to append the slash/
+    # make sure that it's the parent folder that you are uploading to,
+    # for example:
+    #   instead of...
+    #     @to = '~/public_html/your_site/'
+    #   do...
+    #     @to = '~/public_html/'
     @to = '~/location/to/your/web/site/or/app/'
+
+    # add list of file to always include in deployments
+    @always_include = %w()
+
+    # remote tasks : these are tasks that you want to run on the server
+    # @remote_tasks = { :restart_app => 'touch /my/cool/app/restart.txt' }
+    @remote_tasks = {}
 
     # pre_deploy_tasks : These are things that you can run locally before deployment
     # @pre_deploy_tasks = ['rm -rf cache/*']
-    # @pre_deploy_tasks = []
+    @pre_deploy_tasks = []
 
     # post_deploy_tasks : These are things that you can run locally before deployment
     # @post_deploy_tasks = ['rm -rf cache/*']
-    # @post_deploy_tasks = []
+    @post_deploy_tasks = []
 
 Simply set <code>@server</code> to your hostname or ip of your server and set <code>@to</code> to the location
 on the server where the your project is located, make sure that it's the parent folder (and don't forget to
 append the slash '/'), so instead of <code>~/public_html/project_name/</code> you would do <code>~/public_html/</code>
 
-Pre and Post Deployment Tasks
-=============================
+### Command line options
 
-You can run pre and post deployment tasks by assigning or setting the @pre_deploy_tasks or @post_deploy_tasks variables. For now, you can only run tasks locally, but remember since it's just a ruby file, you can require in Net::SSH and write your own methods to run remote tasks, if it comes down to it, I might just write in that ability myself... we'll see, otherwise feel free to fork it and add it yourself :)
+```
+# pass the --help flag for all options
+bam --help
+```
 
-Ignoring Files and Directories on Deployment
-============================================
+* --dry : execute a dry run
+* --deploy : runs the deployment, this is the default task
+* --version : prints the current version
+* --remote : execute a remote command, split multiple tasks with a ':'
 
-What if you don't want to push certain files or directories to your host? Say you have log or tmp files that would otherwise take up space. Well if you use git, you don't have to worry simply add them to .gitignore and bam is smart enough to ignore those files on deploy as well.
-    
-TODO
-====
+### Pre, Post and Remote Deployment Tasks
+
+You can run pre, post and remote deployment tasks by assigning or setting the `@pre_deploy_tasks`, `@post_deploy_tasks` and `@remote_tasks` variables. Here's an example, note that `@remote_tasks` is a Hash:
+
+```
+@pre_deploy_tasks = ['rm -rf cache/*']
+@post_deploy_tasks = ['rm -rf log/*']
+@remote_tasks = {
+    :restart_app => "touch /path/to/app/restart.txt"
+}
+
+# run remote tasks in your pre or post tasks array by adding a remote:[task_name] in your array like:
+@post_deploy_tasks = ['rm-rf log/*', 'remote:restart_app']
+
+# execute remote tasks like:
+bam --remote restart_app
+```
+
+### Ignoring Files and Directories on Deployment
+
+What if you don't want to push certain files or directories to your host? Say you have log or tmp files that would otherwise take up space. Well if you use git, you don't have to worry simply add them to .gitignore and bam is smart enough to ignore those files on deploy as well. 
+
+### Add exceptions to ignore list
+
+There could be some situations where you wouldn't want to exclude all the entries in `.gitignore`, if that's the case, simply add those entries to the `@always_include` variable. Here's an example:
+
+```
+@always_include = %w(app.min.js dist.min.js)
+```
+
+### TODO
 
 - Add static revision history for integrated rollbacks
 - Maybe use choice or highline to prompt to fill in values?
-- Maybe add in remote tasks
+- Maybe add in remote tasks : DONE!
 
 
 Copyright (c) 2010 Vann Ek., released under the MIT license
