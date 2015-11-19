@@ -1,24 +1,58 @@
 #!/usr/bin/env ruby -wKU
 
 begin 
+  require "optparse"
   require "bam_helpers"
   require "bam"
+  require "bam/version"
 rescue LoadError
+  require "optparse"
   require "rubygems"
   require "bam_helpers"
   require "bam"
+  require "bam/version"
 end
 
+include BamHelpers
+
+options = {
+  :deploy => true
+}
 pwd = Dir.pwd
-bampath = File.join(pwd, "deploy.bam")
+bampath = File.join(pwd, "deploy.bam.rb")
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: bam [options]"
+
+  opts.on("-t", "--dry", "Do a dry run") { |v| options[:dry_run] = true }
+  opts.on("-d", "--deploy", "Deploy project (DEFAULT)") { |v| options[:deploy] = true }
+  opts.on("-v", "--version", "Display version") { |v| puts "Version: #{Bam::VERSION}"; exit }   
+  opts.on('-r', '--remote TASKS', "Run a remote task, split multiple tasks with ':'") do |task|
+    options[:remote_tasks] = task.split(":")
+  end
+
+end.parse!
+
 if File.exists?(bampath)
-  @pre_deploy_tasks, @post_deploy_tasks = nil
-  deployfile = File.read(File.join(pwd,"deploy.bam"))
+  deployfile = File.read(File.join(pwd,"deploy.bam.rb"))
+  # this will give use access to @pre_deploy_tasks, @post_deploy_tasks, @always_include, @remote_tasks 
   eval deployfile
-  ready_to = Bam::Deployment.new @server, @to, pwd
-  ready_to.deploy_tasks(@pre_deploy_tasks) unless @pre_deploy_tasks.nil?
-  ready_to.deploy
-  ready_to.deploy_tasks(@post_deploy_tasks) unless @post_deploy_tasks.nil?
+  task_config = {
+    :pre => @pre_deploy_tasks,
+    :post => @post_deploy_tasks,
+    :always_include => @always_include,
+    :remote => @remote_tasks
+  }
+  ready_to = Bam::Deployment.new @server, @to, pwd, options[:dry_run], task_config
+  
+  puts wrap_borders("Executing DRY RUN") if options[:dry_run] 
+  if options[:remote_tasks]
+    options[:remote_tasks].each do |task|
+      ready_to.remote_exec task 
+    end
+  else
+    ready_to.deploy
+  end  
 else
-  puts "No deploy.bam file found, run bamify to generate one."
+  puts "No deploy.bam.rb file found, run bamify to generate one."
 end
