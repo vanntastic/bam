@@ -4,11 +4,13 @@ begin
   require "optparse"
   require "bam_helpers"
   require "bam"
+  require "bam/version"
 rescue LoadError
   require "optparse"
   require "rubygems"
   require "bam_helpers"
   require "bam"
+  require "bam/version"
 end
 
 include BamHelpers
@@ -24,7 +26,7 @@ OptionParser.new do |opts|
 
   opts.on("-t", "--dry", "Do a dry run") { |v| options[:dry_run] = true }
   opts.on("-d", "--deploy", "Deploy project (DEFAULT)") { |v| options[:deploy] = true }
-
+  opts.on("-v", "--version", "Display version") { |v| puts "Version: #{Bam::VERSION}"; exit }   
   opts.on('-r', '--remote TASKS', "Run a remote task, split multiple tasks with ':'") do |task|
     options[:remote_tasks] = task.split(":")
   end
