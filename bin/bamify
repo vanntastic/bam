@@ -69,5 +69,5 @@ else
     file << template
   end
   add_ignore_bam if ARGV[0] == "--ignore-bam"
-  puts wrap_borders("Bam! you're done! bam.deploy.rb generated to : #{bam_path}")
+  puts wrap_borders("Bam! you're done! deploy.bam.rb generated to : #{bam_path}")
 end
