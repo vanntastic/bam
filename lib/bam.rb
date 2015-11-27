@@ -24,12 +24,20 @@ module Bam
       return "" if !has_git_ignores? || !has_git?   
       git_ignore = File.join PWD, ".gitignore"
       exclusions = `cat #{git_ignore}`.split("\n") 
-      exclusions - @task_config[:always_include] 
+      # ensure we remove any commented out .gitignores
+      exclusions = exclusions.select { |exclusion| exclusion[0,1] != '#' }
+      exclusions = exclusions - @task_config[:always_include] 
+      if @dry_run
+        puts wrap_top("EXCLUSIONS:")
+        puts exclusions.join("\n") 
+      end
+      exclusions
     end
 
     def exclusions
       exclude_list = get_exclusions.map { |e| "--exclude '#{e}' " }
       exclude_list = exclude_list.join
+      exclude_list
     end
 
     def remote_exec(name)
@@ -49,7 +57,7 @@ module Bam
       puts(wrap_top("STARTING DEPLOYMENT:"))
       # use -avzC to exclude .git and .svn repositories
       cmd = "rsync -avzC #{@from} #{@server}:#{@to} #{exclusions}"
-      output = "OUTPUT: #{cmd}"
+      output = "OUTPUT:\n#{cmd}"
       puts(wrap_borders(output))
       puts "POST-DEPLOYMENT TASKS: \n\n"
       deploy_tasks @task_config[:post]
